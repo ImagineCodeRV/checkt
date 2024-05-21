@@ -1,11 +1,17 @@
 import 'package:checkt/model/user.dart';
 import 'package:checkt/pages/homepage.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 import 'package:checkt/pages/loginpage.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
@@ -44,9 +50,9 @@ class _AuthCheckState extends State<AuthCheck> {
     sharedPreferences = await SharedPreferences.getInstance();
 
     try {
-      if (sharedPreferences.getString('Funcionario') != null) {
+      if (sharedPreferences.getString('Usuario') != null) {
         setState(() {
-          User.username = sharedPreferences.getString('Funcionario')!;
+          User.username = sharedPreferences.getString('Usuario')!;
           userAvaible = true;
         });
       }
@@ -59,6 +65,6 @@ class _AuthCheckState extends State<AuthCheck> {
 
   @override
   Widget build(BuildContext context) {
-    return userAvaible ? const HomePage() : const LoginPage();
+    return userAvaible ? const HomePage() : LoginPage();
   }
 }

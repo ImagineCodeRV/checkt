@@ -35,7 +35,7 @@ class _HomePageState extends State<HomePage> {
 
   void getId() async {
     QuerySnapshot snap = await FirebaseFirestore.instance
-        .collection("Usuarios")
+        .collection("Usuario")
         .where("id", isEqualTo: User.username)
         .get();
 

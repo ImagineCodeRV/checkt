@@ -18,6 +18,8 @@ dependencies:
   intl: ^0.18.1
   animate_do: ^3.3.4
   month_year_picker: ^0.3.0+1
+  firebase_core: ^2.31.0
+  firebase_auth: ^4.19.5
 
 dev_dependencies:
   flutter_test:

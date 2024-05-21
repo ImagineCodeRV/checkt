@@ -74,7 +74,7 @@ class _CalendarPageState extends State<CalendarPage> {
             height: screenHeight - screenHeight / 5,
             child: StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
-                  .collection("Usuarios")
+                  .collection("Usuario")
                   .doc(User.id)
                   .collection("Record")
                   .snapshots(),

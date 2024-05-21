@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "690253323466",
+    "project_id": "checkt-de471",
+    "storage_bucket": "checkt-de471.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:690253323466:android:c7c626cfd776360a796833",
+        "android_client_info": {
+          "package_name": "br.com.imaginecode.checkt"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "690253323466-3a8vvk2h4t3uqcannfd9usdrghcrpvo8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDN7V-LBUrNe8tVsTc5X4c1dNRPIacAs-4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "690253323466-3a8vvk2h4t3uqcannfd9usdrghcrpvo8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:690253323466:android:cc7444122182afa1796833",
+        "android_client_info": {
+          "package_name": "com.example.checkt"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "690253323466-3a8vvk2h4t3uqcannfd9usdrghcrpvo8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDN7V-LBUrNe8tVsTc5X4c1dNRPIacAs-4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "690253323466-3a8vvk2h4t3uqcannfd9usdrghcrpvo8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

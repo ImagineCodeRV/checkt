@@ -1,11 +1,14 @@
 import 'package:checkt/pages/homepage.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:checkt/pages/registerpage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 //import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+  LoginPage({super.key});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -14,6 +17,20 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   TextEditingController idController = TextEditingController();
   TextEditingController passController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
+  void _loginUser(BuildContext context) async {
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: emailController.text, password: passwordController.text);
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => const HomePage()));
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
   double screenHeight = 0;
   double screenWidth = 0;
   Color primary = const Color.fromARGB(253, 17, 32, 167);
@@ -100,9 +117,10 @@ class _LoginPageState extends State<LoginPage> {
                                       border: Border(
                                           bottom: BorderSide(
                                               color: Colors.grey.shade200))),
-                                  child: const TextField(
-                                    decoration: InputDecoration(
-                                        hintText: "Email or Phone number",
+                                  child: TextField(
+                                    controller: emailController,
+                                    decoration: const InputDecoration(
+                                        hintText: "Email",
                                         hintStyle:
                                             TextStyle(color: Colors.grey),
                                         border: InputBorder.none),
@@ -114,9 +132,10 @@ class _LoginPageState extends State<LoginPage> {
                                       border: Border(
                                           bottom: BorderSide(
                                               color: Colors.grey.shade200))),
-                                  child: const TextField(
+                                  child: TextField(
+                                    controller: passwordController,
                                     obscureText: true,
-                                    decoration: InputDecoration(
+                                    decoration: const InputDecoration(
                                         hintText: "Password",
                                         hintStyle:
                                             TextStyle(color: Colors.grey),
@@ -132,7 +151,7 @@ class _LoginPageState extends State<LoginPage> {
                       FadeInUp(
                           duration: const Duration(milliseconds: 1500),
                           child: const Text(
-                            "Forgot Password?",
+                            "Esqueceu sua Senha?",
                             style: TextStyle(color: Colors.grey),
                           )),
                       const SizedBox(
@@ -141,7 +160,7 @@ class _LoginPageState extends State<LoginPage> {
                       FadeInUp(
                           duration: const Duration(milliseconds: 1600),
                           child: MaterialButton(
-                            onPressed: () {},
+                            onPressed: () => _loginUser(context),
                             height: 50,
                             // margin: EdgeInsets.symmetric(horizontal: 50),
                             color: Colors.orange[900],
@@ -164,13 +183,28 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       FadeInUp(
                           duration: const Duration(milliseconds: 1700),
-                          child: const Text(
-                            "Continue with social media",
-                            style: TextStyle(color: Colors.grey),
+                          child: TextButton(
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => RegisterPage()));
+                            },
+                            child: const Text(
+                              "Ainda não tem uma conta? Registre-se aqui",
+                              style: TextStyle(color: Colors.grey),
+                            ),
                           )),
                       const SizedBox(
                         height: 30,
                       ),
+                      FadeInUp(
+                          duration: const Duration(milliseconds: 1700),
+                          child: const Text(
+                            "Entre com suas redes sociais",
+                            style: TextStyle(color: Colors.grey),
+                          )),
+                      const SizedBox(height: 30),
                       Row(
                         children: <Widget>[
                           Expanded(
@@ -179,13 +213,13 @@ class _LoginPageState extends State<LoginPage> {
                                 child: MaterialButton(
                                   onPressed: () {},
                                   height: 50,
-                                  color: Colors.blue,
+                                  color: Colors.red,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(50),
                                   ),
                                   child: const Center(
                                     child: Text(
-                                      "Facebook",
+                                      "Google",
                                       style: TextStyle(
                                           color: Colors.white,
                                           fontWeight: FontWeight.bold),
