@@ -7,6 +7,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import '../model/database_services.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -40,7 +42,7 @@ class _HomePageState extends State<HomePage> {
         .get();
 
     setState(() {
-      User.id = snap.docs[0].id;
+      User.username = snap.docs[0].id;
     });
   }
 

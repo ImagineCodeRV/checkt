@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../model/database_services.dart';
+
 class CalendarPage extends StatefulWidget {
   const CalendarPage({super.key});
 
@@ -75,7 +77,7 @@ class _CalendarPageState extends State<CalendarPage> {
             child: StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
                   .collection("Usuario")
-                  .doc(User.id)
+                  .doc(User.username)
                   .collection("Record")
                   .snapshots(),
               builder: (BuildContext context,
