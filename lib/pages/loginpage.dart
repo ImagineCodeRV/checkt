@@ -1,10 +1,8 @@
 import 'package:checkt/pages/homepage.dart';
 import 'package:animate_do/animate_do.dart';
-import 'package:checkt/pages/registerpage.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:checkt/services/auth_service.dart';
 import 'package:flutter/material.dart';
-//import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
@@ -15,12 +13,68 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  TextEditingController idController = TextEditingController();
-  TextEditingController passController = TextEditingController();
+  final formKey = GlobalKey<FormState>();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
-  void _loginUser(BuildContext context) async {
+  bool isLogin = true;
+  late String titulo;
+  late String subTitulo;
+  late String actionButton;
+  late String toggleButton;
+  bool loading = false;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    setFormAction(true);
+  }
+
+  setFormAction(bool acao) {
+    setState(() {
+      isLogin = acao;
+      if (isLogin) {
+        titulo = 'Login';
+        subTitulo = 'Bem Vindo!!';
+        actionButton = 'Login';
+        toggleButton = 'Ainda não tem conta? Cadastre-se agora';
+      } else {
+        titulo = 'Registre-se';
+        subTitulo = 'Crie sua conta';
+        actionButton = 'Registrar';
+        toggleButton = 'Já tem uma conta? Acesse aqui';
+      }
+    });
+  }
+
+  login() async {
+    setState(() => loading = true);
+    try {
+      await context
+          .read<AuthService>()
+          .login(emailController.text, passwordController.text);
+    } on AuthException catch (e) {
+      setState(() => loading = false);
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(e.message)));
+    }
+  }
+
+  registrar() async {
+    setState(() => loading = true);
+    try {
+      await context
+          .read<AuthService>()
+          .registrar(emailController.text, passwordController.text);
+    } on AuthException catch (e) {
+      setState(() => loading = false);
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(e.message)));
+    }
+  }
+
+  /*void _loginUser(BuildContext context) async {
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: emailController.text, password: passwordController.text);
@@ -29,7 +83,7 @@ class _LoginPageState extends State<LoginPage> {
     } catch (e) {
       print('Error: $e');
     }
-  }
+  }*/
 
   double screenHeight = 0;
   double screenWidth = 0;
@@ -66,18 +120,18 @@ class _LoginPageState extends State<LoginPage> {
                 children: <Widget>[
                   FadeInUp(
                       duration: const Duration(milliseconds: 1000),
-                      child: const Text(
-                        "Login",
-                        style: TextStyle(color: Colors.white, fontSize: 40),
+                      child: Text(
+                        titulo,
+                        style: const TextStyle(color: Colors.white, fontSize: 40),
                       )),
                   const SizedBox(
                     height: 10,
                   ),
                   FadeInUp(
                       duration: const Duration(milliseconds: 1300),
-                      child: const Text(
-                        "Bem vindo de volta!!",
-                        style: TextStyle(color: Colors.white, fontSize: 18),
+                      child: Text(
+                        subTitulo,
+                        style: const TextStyle(color: Colors.white, fontSize: 18),
                       )),
                 ],
               ),
@@ -117,13 +171,20 @@ class _LoginPageState extends State<LoginPage> {
                                       border: Border(
                                           bottom: BorderSide(
                                               color: Colors.grey.shade200))),
-                                  child: TextField(
+                                  child: TextFormField(
                                     controller: emailController,
                                     decoration: const InputDecoration(
                                         hintText: "Email",
                                         hintStyle:
                                             TextStyle(color: Colors.grey),
                                         border: InputBorder.none),
+                                    keyboardType: TextInputType.emailAddress,
+                                    validator: (value) {
+                                      if (value!.isEmpty) {
+                                        return 'Informe o email corretamente';
+                                      }
+                                      return null;
+                                    },
                                   ),
                                 ),
                                 Container(
@@ -132,7 +193,7 @@ class _LoginPageState extends State<LoginPage> {
                                       border: Border(
                                           bottom: BorderSide(
                                               color: Colors.grey.shade200))),
-                                  child: TextField(
+                                  child: TextFormField(
                                     controller: passwordController,
                                     obscureText: true,
                                     decoration: const InputDecoration(
@@ -140,6 +201,14 @@ class _LoginPageState extends State<LoginPage> {
                                         hintStyle:
                                             TextStyle(color: Colors.grey),
                                         border: InputBorder.none),
+                                    validator: (value) {
+                                      if (value!.isEmpty) {
+                                        return 'Informe sua senha!';
+                                      } else if (value.length < 6) {
+                                        return 'Sua senha deve ter no mínimo 6 caracteres';
+                                      }
+                                      return null;
+                                    },
                                   ),
                                 ),
                               ],
@@ -158,30 +227,63 @@ class _LoginPageState extends State<LoginPage> {
                         height: 40,
                       ),
                       FadeInUp(
-                          duration: const Duration(milliseconds: 1600),
-                          child: MaterialButton(
-                            onPressed: () => _loginUser(context),
-                            height: 50,
-                            // margin: EdgeInsets.symmetric(horizontal: 50),
-                            color: Colors.orange[900],
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(50),
-                            ),
-                            // decoration: BoxDecoration(
-                            // ),
-                            child: const Center(
-                              child: Text(
-                                "Login",
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                          )),
+                        duration: const Duration(milliseconds: 1600),
+                        child: MaterialButton(
+                          onPressed: () {
+                            if (formKey.currentState!.validate()) {
+                              if (isLogin) {
+                                login();
+                              } else {
+                                registrar();
+                              }
+                            }
+                          },
+                          height: 50,
+                          // margin: EdgeInsets.symmetric(horizontal: 50),
+                          color: Colors.orange[900],
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                          // decoration: BoxDecoration(
+                          // ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: (loading)
+                                ? [
+                                    const Padding(
+                                      padding: EdgeInsets.all(16),
+                                      child: SizedBox(
+                                        height: 24,
+                                        width: 24,
+                                        child: CircularProgressIndicator(
+                                          color: Colors.yellow,
+                                        ),
+                                      ),
+                                    ),
+                                  ]
+                                : [
+                                    const Icon(Icons.check),
+                                    Padding(
+                                      padding: const EdgeInsets.all(16.0),
+                                      child: Text(
+                                        actionButton,
+                                        style: const TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ],
+                          ),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () => setFormAction(!isLogin),
+                        child: Text(toggleButton),
+                      ),
                       const SizedBox(
                         height: 50,
                       ),
-                      FadeInUp(
+                      /*FadeInUp(
                           duration: const Duration(milliseconds: 1700),
                           child: TextButton(
                             onPressed: () {
@@ -194,7 +296,7 @@ class _LoginPageState extends State<LoginPage> {
                               "Ainda não tem uma conta? Registre-se aqui",
                               style: TextStyle(color: Colors.grey),
                             ),
-                          )),
+                          )),*/
                       const SizedBox(
                         height: 30,
                       ),

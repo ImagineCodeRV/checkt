@@ -15,19 +15,20 @@ dependencies:
   slide_to_act: ^2.0.2
   cloud_firestore: ^4.17.3
   shared_preferences: ^2.2.3
-  intl: ^0.18.1
+  intl:
   animate_do: ^3.3.4
-  month_year_picker: ^0.3.0+1
   firebase_core: ^2.31.0
   firebase_auth: ^4.19.5
   flutter_barcode_scanner: ^2.0.0
   geocoding: ^3.0.0
   location: ^6.0.2
+  path_provider: ^2.0.2
+  provider: ^6.1.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.0
+  flutter_lints: ^4.0.0
 
 flutter:
   uses-material-design: true
