@@ -1,102 +1,40 @@
+import 'dart:core';
 import 'package:checkt/pages/homepage.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:checkt/pages/registerpage.dart';
 import 'package:checkt/services/auth_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
-  LoginPage({super.key});
+  const LoginPage({super.key});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
+  Color primary = const Color.fromARGB(253, 17, 32, 167);
+  late SharedPreferences sharedPreferences;
   final formKey = GlobalKey<FormState>();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
-  bool isLogin = true;
-  late String titulo;
-  late String subTitulo;
-  late String actionButton;
-  late String toggleButton;
-  bool loading = false;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    setFormAction(true);
-  }
-
-  setFormAction(bool acao) {
-    setState(() {
-      isLogin = acao;
-      if (isLogin) {
-        titulo = 'Login';
-        subTitulo = 'Bem Vindo!!';
-        actionButton = 'Login';
-        toggleButton = 'Ainda não tem conta? Cadastre-se agora';
-      } else {
-        titulo = 'Registre-se';
-        subTitulo = 'Crie sua conta';
-        actionButton = 'Registrar';
-        toggleButton = 'Já tem uma conta? Acesse aqui';
-      }
-    });
-  }
-
-  login() async {
-    setState(() => loading = true);
-    try {
-      await context
-          .read<AuthService>()
-          .login(emailController.text, passwordController.text);
-    } on AuthException catch (e) {
-      setState(() => loading = false);
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.message)));
-    }
-  }
-
-  registrar() async {
-    setState(() => loading = true);
-    try {
-      await context
-          .read<AuthService>()
-          .registrar(emailController.text, passwordController.text);
-    } on AuthException catch (e) {
-      setState(() => loading = false);
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.message)));
-    }
-  }
-
-  /*void _loginUser(BuildContext context) async {
+  void _loginUser(BuildContext context) async {
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: emailController.text, password: passwordController.text);
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => const HomePage()));
+          context, MaterialPageRoute(builder: (context) => HomePage()));
     } catch (e) {
       print('Error: $e');
     }
-  }*/
-
-  double screenHeight = 0;
-  double screenWidth = 0;
-  Color primary = const Color.fromARGB(253, 17, 32, 167);
-  late SharedPreferences sharedPreferences;
+  }
 
   @override
   Widget build(BuildContext context) {
-    //  final bool isKeyboardVisible =
-    //      KeyboardVisibilityProvider.isKeyboardVisible(context);
-    screenHeight = MediaQuery.of(context).size.height;
-    screenWidth = MediaQuery.of(context).size.width;
-
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Container(
@@ -120,18 +58,18 @@ class _LoginPageState extends State<LoginPage> {
                 children: <Widget>[
                   FadeInUp(
                       duration: const Duration(milliseconds: 1000),
-                      child: Text(
-                        titulo,
-                        style: const TextStyle(color: Colors.white, fontSize: 40),
+                      child: const Text(
+                        "Login",
+                        style: TextStyle(color: Colors.white, fontSize: 40),
                       )),
                   const SizedBox(
                     height: 10,
                   ),
                   FadeInUp(
                       duration: const Duration(milliseconds: 1300),
-                      child: Text(
-                        subTitulo,
-                        style: const TextStyle(color: Colors.white, fontSize: 18),
+                      child: const Text(
+                        "Bem vindo",
+                        style: TextStyle(color: Colors.white, fontSize: 18),
                       )),
                 ],
               ),
@@ -171,20 +109,13 @@ class _LoginPageState extends State<LoginPage> {
                                       border: Border(
                                           bottom: BorderSide(
                                               color: Colors.grey.shade200))),
-                                  child: TextFormField(
+                                  child: TextField(
                                     controller: emailController,
                                     decoration: const InputDecoration(
                                         hintText: "Email",
                                         hintStyle:
                                             TextStyle(color: Colors.grey),
                                         border: InputBorder.none),
-                                    keyboardType: TextInputType.emailAddress,
-                                    validator: (value) {
-                                      if (value!.isEmpty) {
-                                        return 'Informe o email corretamente';
-                                      }
-                                      return null;
-                                    },
                                   ),
                                 ),
                                 Container(
@@ -193,7 +124,7 @@ class _LoginPageState extends State<LoginPage> {
                                       border: Border(
                                           bottom: BorderSide(
                                               color: Colors.grey.shade200))),
-                                  child: TextFormField(
+                                  child: TextField(
                                     controller: passwordController,
                                     obscureText: true,
                                     decoration: const InputDecoration(
@@ -201,14 +132,6 @@ class _LoginPageState extends State<LoginPage> {
                                         hintStyle:
                                             TextStyle(color: Colors.grey),
                                         border: InputBorder.none),
-                                    validator: (value) {
-                                      if (value!.isEmpty) {
-                                        return 'Informe sua senha!';
-                                      } else if (value.length < 6) {
-                                        return 'Sua senha deve ter no mínimo 6 caracteres';
-                                      }
-                                      return null;
-                                    },
                                   ),
                                 ),
                               ],
@@ -227,63 +150,30 @@ class _LoginPageState extends State<LoginPage> {
                         height: 40,
                       ),
                       FadeInUp(
-                        duration: const Duration(milliseconds: 1600),
-                        child: MaterialButton(
-                          onPressed: () {
-                            if (formKey.currentState!.validate()) {
-                              if (isLogin) {
-                                login();
-                              } else {
-                                registrar();
-                              }
-                            }
-                          },
-                          height: 50,
-                          // margin: EdgeInsets.symmetric(horizontal: 50),
-                          color: Colors.orange[900],
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(50),
-                          ),
-                          // decoration: BoxDecoration(
-                          // ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: (loading)
-                                ? [
-                                    const Padding(
-                                      padding: EdgeInsets.all(16),
-                                      child: SizedBox(
-                                        height: 24,
-                                        width: 24,
-                                        child: CircularProgressIndicator(
-                                          color: Colors.yellow,
-                                        ),
-                                      ),
-                                    ),
-                                  ]
-                                : [
-                                    const Icon(Icons.check),
-                                    Padding(
-                                      padding: const EdgeInsets.all(16.0),
-                                      child: Text(
-                                        actionButton,
-                                        style: const TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                  ],
-                          ),
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () => setFormAction(!isLogin),
-                        child: Text(toggleButton),
-                      ),
+                          duration: const Duration(milliseconds: 1600),
+                          child: MaterialButton(
+                            onPressed: () => _loginUser(context),
+                            height: 50,
+                            // margin: EdgeInsets.symmetric(horizontal: 50),
+                            color: Colors.orange[900],
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(50),
+                            ),
+                            // decoration: BoxDecoration(
+                            // ),
+                            child: const Center(
+                              child: Text(
+                                "Login",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          )),
                       const SizedBox(
                         height: 50,
                       ),
-                      /*FadeInUp(
+                      FadeInUp(
                           duration: const Duration(milliseconds: 1700),
                           child: TextButton(
                             onPressed: () {
@@ -296,17 +186,19 @@ class _LoginPageState extends State<LoginPage> {
                               "Ainda não tem uma conta? Registre-se aqui",
                               style: TextStyle(color: Colors.grey),
                             ),
-                          )),*/
+                          )),
                       const SizedBox(
                         height: 30,
                       ),
                       FadeInUp(
                           duration: const Duration(milliseconds: 1700),
                           child: const Text(
-                            "Entre com suas redes sociais",
+                            "Registre-se com suas redes sociais",
                             style: TextStyle(color: Colors.grey),
                           )),
-                      const SizedBox(height: 30),
+                      const SizedBox(
+                        height: 30,
+                      ),
                       Row(
                         children: <Widget>[
                           Expanded(
@@ -321,7 +213,7 @@ class _LoginPageState extends State<LoginPage> {
                                   ),
                                   child: const Center(
                                     child: Text(
-                                      "Google",
+                                      "Facebook",
                                       style: TextStyle(
                                           color: Colors.white,
                                           fontWeight: FontWeight.bold),
@@ -336,13 +228,7 @@ class _LoginPageState extends State<LoginPage> {
                             child: FadeInUp(
                                 duration: const Duration(milliseconds: 1900),
                                 child: MaterialButton(
-                                  onPressed: () {
-                                    Navigator.pushReplacement(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                const HomePage()));
-                                  },
+                                  onPressed: () {},
                                   height: 50,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(50),
@@ -357,7 +243,7 @@ class _LoginPageState extends State<LoginPage> {
                                     ),
                                   ),
                                 )),
-                          ),
+                          )
                         ],
                       )
                     ],

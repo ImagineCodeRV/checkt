@@ -9,8 +9,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Checkt',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData.dark(),
-    home: AuthCheck(),
+      theme: ThemeData(primaryColor: Colors.white),
+      home: AuthCheck(),
     );
   }
 }

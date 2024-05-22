@@ -1,10 +1,15 @@
 import 'dart:async';
 import 'package:checkt/model/user.dart';
+import 'package:checkt/pages/loginpage.dart';
+import 'package:checkt/services/auth_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:slide_to_act/slide_to_act.dart';
-import '../model/database_services.dart';
+import '../database/database_firestore.dart';
+import 'package:checkt/model/user.dart';
 
 class TodayPage extends StatefulWidget {
   const TodayPage({super.key});
@@ -14,6 +19,7 @@ class TodayPage extends StatefulWidget {
 }
 
 class _TodayPageState extends State<TodayPage> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   Color bgColor = Colors.white;
   Color primary = Color.fromARGB(252, 167, 165, 17);
   double screenHeight = 0;
@@ -25,7 +31,6 @@ class _TodayPageState extends State<TodayPage> {
   String scanResult = " ";
   String officeCode = " ";
 
-
   @override
   void initState() {
     super.initState();
@@ -36,7 +41,7 @@ class _TodayPageState extends State<TodayPage> {
     try {
       QuerySnapshot snap = await FirebaseFirestore.instance
           .collection('Usuario')
-          .where('id', isEqualTo: User.username)
+          .where('id', isEqualTo: Users.username)
           .get();
 
       DocumentSnapshot snapdoc = await FirebaseFirestore.instance
@@ -59,6 +64,12 @@ class _TodayPageState extends State<TodayPage> {
 
     print(checkIn);
     print(checkOut);
+  }
+
+  logout() async {
+    await _auth.signOut();
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => LoginPage()));
   }
 
   @override
@@ -85,7 +96,7 @@ class _TodayPageState extends State<TodayPage> {
               alignment: Alignment.centerLeft,
               margin: const EdgeInsets.only(top: 32),
               child: Text(
-                'Usuario ${User.username}',
+                'Usuario ${Users.username}',
                 style: TextStyle(
                   fontSize: screenWidth / 18,
                   color: Colors.black,
@@ -225,7 +236,7 @@ class _TodayPageState extends State<TodayPage> {
                             QuerySnapshot snap = await FirebaseFirestore
                                 .instance
                                 .collection('Usuario')
-                                .where('id', isEqualTo: User.username)
+                                .where('id', isEqualTo: Users.username)
                                 .get();
 
                             DocumentSnapshot snapdoc = await FirebaseFirestore
@@ -287,6 +298,10 @@ class _TodayPageState extends State<TodayPage> {
                       ),
                     ),
                   ),
+            Container(
+              child: ElevatedButton(
+                  onPressed: logout, child: const Text("LogOut")),
+            )
           ],
         ),
       ),

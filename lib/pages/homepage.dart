@@ -2,15 +2,18 @@ import 'package:checkt/model/user.dart';
 import 'package:checkt/pages/calendarpage.dart';
 import 'package:checkt/pages/profilepage.dart';
 import 'package:checkt/pages/todaypage.dart';
+import 'package:checkt/services/auth_service.dart';
 import 'package:checkt/widget/bottomnavigatorbar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
-import '../model/database_services.dart';
+import '../database/database_firestore.dart';
+import 'package:checkt/model/user.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  HomePage({super.key});
+  late FirebaseFirestore db;
+  late AuthService auth;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -38,11 +41,11 @@ class _HomePageState extends State<HomePage> {
   void getId() async {
     QuerySnapshot snap = await FirebaseFirestore.instance
         .collection("Usuario")
-        .where("id", isEqualTo: User.username)
+        .where("id", isEqualTo: Users.username)
         .get();
 
     setState(() {
-      User.username = snap.docs[0].id;
+      Users.username = snap.docs[0].id;
     });
   }
 

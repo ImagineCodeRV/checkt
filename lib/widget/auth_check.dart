@@ -21,7 +21,7 @@ class _AuthCheckState extends State<AuthCheck> {
     else if (auth.usuario == null)
       return LoginPage();
     else
-      return const HomePage();
+      return HomePage();
   }
 
   loading() {
