@@ -1,15 +1,11 @@
 import 'dart:async';
 import 'package:checkt/model/user.dart';
 import 'package:checkt/pages/loginpage.dart';
-import 'package:checkt/services/auth_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 import 'package:slide_to_act/slide_to_act.dart';
-import '../database/database_firestore.dart';
-import 'package:checkt/model/user.dart';
 
 class TodayPage extends StatefulWidget {
   const TodayPage({super.key});

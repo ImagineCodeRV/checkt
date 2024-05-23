@@ -1,5 +1,4 @@
 import 'package:checkt/model/check.dart';
-import 'package:checkt/model/user.dart';
 import 'package:checkt/pages/loginpage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -39,13 +38,13 @@ class DBFirestore {
 
   void registerCheck(BuildContext context) async {
     final List<Horarios> _lista = [];
-    final checkinController = TextEditingController();
+    final checkInController = TextEditingController();
     final checkoutController = TextEditingController();
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
     CollectionReference horarios = firestore.collection('Usuarios');
     horarios.add([
       {
-        'checkIn': checkoutController.text,
+        'checkIn': checkInController.text,
         'checkOut': checkoutController.text,
       }
     ]);

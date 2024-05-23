@@ -7,8 +7,6 @@ import 'package:checkt/widget/bottomnavigatorbar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../database/database_firestore.dart';
-import 'package:checkt/model/user.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({super.key});
