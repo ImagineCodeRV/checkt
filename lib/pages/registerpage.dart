@@ -1,7 +1,9 @@
 import 'package:animate_do/animate_do.dart';
+import 'package:checkt/model/user.dart';
 import 'package:checkt/pages/loginpage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 class RegisterPage extends StatelessWidget {
@@ -13,8 +15,15 @@ class RegisterPage extends StatelessWidget {
   BuildContext get context => this.context;
 
   void _registerUser(BuildContext context) async {
+    String usuario = usernameController.text;
+    Users.username = usuario;
+
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
     CollectionReference usuarios = firestore.collection('Usuarios');
+    final DatabaseReference ref = FirebaseDatabase.instance
+        .ref()
+        .child('Usuarios')
+        .child(usuario);
     try {
       UserCredential userCredential =
           await FirebaseAuth.instance.createUserWithEmailAndPassword(
@@ -22,6 +31,10 @@ class RegisterPage extends StatelessWidget {
         password: passwordController.text,
       );
       usuarios.add({
+        'nome': usernameController.text,
+        'email': emailController.text,
+      });
+      await ref.set({
         'nome': usernameController.text,
         'email': emailController.text,
       });
@@ -185,7 +198,12 @@ class RegisterPage extends StatelessWidget {
                       FadeInUp(
                           duration: const Duration(milliseconds: 1700),
                           child: TextButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => LoginPage()));
+                            },
                             child: const Text(
                               "Já tem uma conta? Acesse aqui",
                               style: TextStyle(color: Colors.grey),

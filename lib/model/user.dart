@@ -1,4 +1,5 @@
 class Users {
-  static String username = '';
-  static String email = '';
+  static String id = ' ';
+  static String username = ' ';
+  static String email = ' ';
 }

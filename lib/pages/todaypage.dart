@@ -1,9 +1,12 @@
 import 'dart:async';
+import 'dart:core';
 import 'package:checkt/model/user.dart';
 import 'package:checkt/pages/loginpage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:slide_to_act/slide_to_act.dart';
 
@@ -15,17 +18,16 @@ class TodayPage extends StatefulWidget {
 }
 
 class _TodayPageState extends State<TodayPage> {
+  User? isLogged = FirebaseAuth.instance.currentUser;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
   Color bgColor = Colors.white;
   Color primary = Color.fromARGB(252, 167, 165, 17);
   double screenHeight = 0;
   double screenWidth = 0;
 
-  String checkIn = '--/--';
-  String checkOut = '--/--';
-  String location = " ";
-  String scanResult = " ";
-  String officeCode = " ";
+  TextEditingController checkIn = TextEditingController();
+  TextEditingController checkOut = TextEditingController();
 
   @override
   void initState() {
@@ -37,7 +39,7 @@ class _TodayPageState extends State<TodayPage> {
     try {
       QuerySnapshot snap = await FirebaseFirestore.instance
           .collection('Usuario')
-          .where('id', isEqualTo: Users.username)
+          .where('email', isEqualTo: Users.email)
           .get();
 
       DocumentSnapshot snapdoc = await FirebaseFirestore.instance
@@ -53,8 +55,8 @@ class _TodayPageState extends State<TodayPage> {
       });
     } catch (e) {
       setState(() {
-        checkIn = '--/--';
-        checkOut = '--/--';
+        checkIn = TextEditingController();
+        checkOut = TextEditingController();
       });
     }
 
@@ -92,7 +94,7 @@ class _TodayPageState extends State<TodayPage> {
               alignment: Alignment.centerLeft,
               margin: const EdgeInsets.only(top: 32),
               child: Text(
-                'Usuario ${Users.username}',
+                Users.username,
                 style: TextStyle(
                   fontSize: screenWidth / 18,
                   color: Colors.black,
@@ -141,7 +143,7 @@ class _TodayPageState extends State<TodayPage> {
                           ),
                         ),
                         Text(
-                          checkIn,
+                          checkIn.value.text,
                           style: TextStyle(
                             fontSize: screenWidth / 18,
                             color: Colors.black54,
@@ -163,7 +165,7 @@ class _TodayPageState extends State<TodayPage> {
                           ),
                         ),
                         Text(
-                          checkOut,
+                          checkOut.value.text,
                           style: TextStyle(
                             fontSize: screenWidth / 20,
                             color: Colors.black54,
@@ -229,16 +231,22 @@ class _TodayPageState extends State<TodayPage> {
                           key: key,
                           onSubmit: () async {
                             Timer(const Duration(seconds: 1), () {});
+                            /*CollectionReference horario =
+                                firestore.collection('Usuarios');
+                            horario.add({
+                              'checkIn': checkIn,
+                              'checkOut': checkOut,
+                            });*/
                             QuerySnapshot snap = await FirebaseFirestore
                                 .instance
                                 .collection('Usuario')
-                                .where('id', isEqualTo: Users.username)
+                                .where('email', isEqualTo: Users.email)
                                 .get();
 
                             DocumentSnapshot snapdoc = await FirebaseFirestore
                                 .instance
                                 .collection("Usuario")
-                                .doc(snap.docs[0].id)
+                                .doc('Check')
                                 .collection("Gravar")
                                 .doc(DateFormat('dd/MM/yyyy')
                                     .format(DateTime.now()))
@@ -248,11 +256,12 @@ class _TodayPageState extends State<TodayPage> {
                               String checkIn = snapdoc['checkIn'];
                               setState(() {
                                 checkOut =
-                                    DateFormat('hh:mm').format(DateTime.now());
+                                    DateFormat('hh:mm').format(DateTime.now())
+                                        as TextEditingController;
                               });
                               await FirebaseFirestore.instance
-                                  .collection("Usuario")
-                                  .doc(snap.docs[0].id)
+                                  .collection("Usuarios")
+                                  .doc()
                                   .collection("Gravar")
                                   .doc(DateFormat('dd/MM/yyyy')
                                       .format(DateTime.now()))
@@ -264,10 +273,11 @@ class _TodayPageState extends State<TodayPage> {
                             } catch (e) {
                               setState(() {
                                 checkIn =
-                                    DateFormat('hh:mm').format(DateTime.now());
+                                    DateFormat('hh:mm').format(DateTime.now())
+                                        as TextEditingController;
                               });
                               await FirebaseFirestore.instance
-                                  .collection("Usuario")
+                                  .collection("Usuarios")
                                   .doc(snap.docs[0].id)
                                   .collection("Gravar")
                                   .doc(DateFormat('dd/MM/yyyy')

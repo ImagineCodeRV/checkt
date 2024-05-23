@@ -1,330 +1,317 @@
-/*Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: Container(
-        width: double.infinity,
-        decoration: BoxDecoration(
-            gradient: LinearGradient(begin: Alignment.topCenter, colors: [
-          Colors.orange.shade900,
-          Colors.orange.shade800,
-          Colors.orange.shade400
-        ])),
+/*import 'dart:async';
+import 'dart:core';
+import 'package:checkt/model/user.dart';
+import 'package:checkt/pages/loginpage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
+import 'package:slide_to_act/slide_to_act.dart';
+
+class TodayPage extends StatefulWidget {
+  const TodayPage({super.key});
+
+  @override
+  State<TodayPage> createState() => _TodayPageState();
+}
+
+class _TodayPageState extends State<TodayPage> {
+  User? isLogged = FirebaseAuth.instance.currentUser;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  Color bgColor = Colors.white;
+  Color primary = Color.fromARGB(252, 167, 165, 17);
+  double screenHeight = 0;
+  double screenWidth = 0;
+
+  TextEditingController checkIn = TextEditingController();
+  TextEditingController checkOut = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _getGravar();
+  }
+
+  void _getGravar() async {
+    try {
+      QuerySnapshot snap = await FirebaseFirestore.instance
+          .collection('Usuario')
+          .where('id', isEqualTo: Users.username)
+          .get();
+
+      DocumentSnapshot snapdoc = await FirebaseFirestore.instance
+          .collection("Usuario")
+          .doc(snap.docs[0].id)
+          .collection("Record")
+          .doc(DateFormat('dd/MM/yyyy').format(DateTime.now()))
+          .get();
+
+      setState(() {
+        checkIn = snapdoc['checkIn'];
+        checkOut = snapdoc['checkOut'];
+      });
+    } catch (e) {
+      setState(() {
+        checkIn = TextEditingController();
+        checkOut = TextEditingController();
+      });
+    }
+
+    print(checkIn);
+    print(checkOut);
+  }
+
+  logout() async {
+    await _auth.signOut();
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => LoginPage()));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    screenHeight = MediaQuery.of(context).size.height;
+    screenWidth = MediaQuery.of(context).size.width;
+    return Scaffold(
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            const SizedBox(
-              height: 80,
+          children: [
+            Container(
+              alignment: Alignment.centerLeft,
+              margin: const EdgeInsets.only(top: 32),
+              child: Text(
+                'Bem Vindo',
+                style: TextStyle(
+                  fontSize: screenWidth / 20,
+                  color: Colors.black,
+                ),
+              ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  FadeInUp(
-                      duration: const Duration(milliseconds: 1000),
-                      child: Text(
-                        "Login",
-                        style: const TextStyle(color: Colors.white, fontSize: 40),
-                      )),
-                  const SizedBox(
-                    height: 10,
+            Container(
+              alignment: Alignment.centerLeft,
+              margin: const EdgeInsets.only(top: 32),
+              child: Text(
+                'Usuario',
+                style: TextStyle(
+                  fontSize: screenWidth / 18,
+                  color: Colors.black,
+                ),
+              ),
+            ),
+            Container(
+              alignment: Alignment.centerLeft,
+              margin: const EdgeInsets.only(top: 32, bottom: 32),
+              child: Text(
+                'Today Status',
+                style: TextStyle(
+                  fontSize: screenWidth / 18,
+                  color: Colors.black,
+                ),
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.only(top: 12, bottom: 32),
+              height: 150,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 10,
+                    offset: Offset(2, 2),
                   ),
-                  FadeInUp(
-                      duration: const Duration(milliseconds: 1300),
-                      child: Text(
-                        "Bem vindo!!",
-                        style: const TextStyle(color: Colors.white, fontSize: 18),
-                      )),
+                ],
+                borderRadius: BorderRadius.all(Radius.circular(20)),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Check In',
+                          style: TextStyle(
+                            fontSize: screenWidth / 20,
+                            color: Colors.black54,
+                          ),
+                        ),
+                        Text(
+                          checkIn.value.text,
+                          style: TextStyle(
+                            fontSize: screenWidth / 18,
+                            color: Colors.black54,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Check Out',
+                          style: TextStyle(
+                            fontSize: screenWidth / 20,
+                            color: Colors.black54,
+                          ),
+                        ),
+                        Text(
+                          checkOut.value.text,
+                          style: TextStyle(
+                            fontSize: screenWidth / 20,
+                            color: Colors.black54,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
-            const SizedBox(height: 20),
-            Expanded(
-              child: Container(
-                decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(60),
-                        topRight: Radius.circular(60))),
-                child: Padding(
-                  padding: const EdgeInsets.all(30),
-                  child: Column(
-                    children: <Widget>[
-                      const SizedBox(
-                        height: 60,
-                      ),
-                      FadeInUp(
-                          duration: const Duration(milliseconds: 1400),
-                          child: Container(
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10),
-                                boxShadow: const [
-                                  BoxShadow(
-                                      color: Color.fromRGBO(225, 95, 27, .3),
-                                      blurRadius: 20,
-                                      offset: Offset(0, 10))
-                                ]),
-                            child: Column(
-                              children: <Widget>[
-                                Container(
-                                  padding: const EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                      border: Border(
-                                          bottom: BorderSide(
-                                              color: Colors.grey.shade200))),
-                                  child: TextFormField(
-                                    controller: emailController,
-                                    decoration: const InputDecoration(
-                                        hintText: "Email",
-                                        hintStyle:
-                                            TextStyle(color: Colors.grey),
-                                        border: InputBorder.none),
-                                    keyboardType: TextInputType.emailAddress,
-                                    /*validator: (value) {
-                                      if (value!.isEmpty) {
-                                        return 'Informe o email corretamente';
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                ),*/
-                                Container(
-                                  padding: const EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                      border: Border(
-                                          bottom: BorderSide(
-                                              color: Colors.grey.shade200))),
-                                  child: TextFormField(
-                                    controller: passwordController,
-                                    obscureText: true,
-                                    decoration: const InputDecoration(
-                                        hintText: "Password",
-                                        hintStyle:
-                                            TextStyle(color: Colors.grey),
-                                        border: InputBorder.none),
-                                    /*validator: (value) {
-                                      if (value!.isEmpty) {
-                                        return 'Informe sua senha!';
-                                      } else if (value.length < 6) {
-                                        return 'Sua senha deve ter no mínimo 6 caracteres';
-                                      }
-                                      return null;
-                                    },*/
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )),
-                      const SizedBox(
-                        height: 40,
-                      ),
-                      FadeInUp(
-                          duration: const Duration(milliseconds: 1500),
-                          child: const Text(
-                            "Esqueceu sua Senha?",
-                            style: TextStyle(color: Colors.grey),
-                          )),
-                      const SizedBox(
-                        height: 40,
-                      ),
-                      FadeInUp(
-                        duration: const Duration(milliseconds: 1600),
-                        child: MaterialButton(
-                          onPressed: () {
-                            /*if (formKey.currentState!.validate()) {
-                              if (isLogin) {
-                                login();
-                              } else {
-                                registrar();
-                              }
-                            }*/
-                          },
-                          height: 50,
-                          // margin: EdgeInsets.symmetric(horizontal: 50),
-                          color: Colors.orange[900],
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(50),
-                          ),
-                          // decoration: BoxDecoration(
-                          // ),
-                          /*child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: (loading)
-                                ? [
-                                    const Padding(
-                                      padding: EdgeInsets.all(16),
-                                      child: SizedBox(
-                                        height: 24,
-                                        width: 24,
-                                        child: CircularProgressIndicator(
-                                          color: Colors.yellow,
-                                        ),
-                                      ),
-                                    ),
-                                  ]
-                                : [
-                                    const Icon(Icons.check),
-                                    Padding(
-                                      padding: const EdgeInsets.all(16.0),
-                                      child: Text(
-                                        actionButton,
-                                        style: const TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                  ],
-                          ),
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () => setFormAction(!isLogin),
-                        child: Text(toggleButton),
-                      ),*/
-                      const SizedBox(
-                        height: 50,
-                      ),
-                      FadeInUp(
-                          duration: const Duration(milliseconds: 1700),
-                          child: TextButton(
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => RegisterPage()));
-                            },
-                            child: const Text(
-                              "Ainda não tem uma conta? Registre-se aqui",
-                              style: TextStyle(color: Colors.grey),
-                            ),
-                          )),
-                      const SizedBox(
-                        height: 30,
-                      ),
-                      FadeInUp(
-                          duration: const Duration(milliseconds: 1700),
-                          child: const Text(
-                            "Entre com suas redes sociais",
-                            style: TextStyle(color: Colors.grey),
-                          )),
-                      const SizedBox(height: 30),
-                      Row(
-                        children: <Widget>[
-                          Expanded(
-                            child: FadeInUp(
-                                duration: const Duration(milliseconds: 1800),
-                                child: MaterialButton(
-                                  onPressed: () {},
-                                  height: 50,
-                                  color: Colors.red,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(50),
-                                  ),
-                                  child: const Center(
-                                    child: Text(
-                                      "Google",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                )),
-                          ),
-                          const SizedBox(
-                            width: 30,
-                          ),
-                          Expanded(
-                            child: FadeInUp(
-                                duration: const Duration(milliseconds: 1900),
-                                child: MaterialButton(
-                                  onPressed: () {
-                                    Navigator.pushReplacement(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                const HomePage()));
-                                  },
-                                  height: 50,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(50),
-                                  ),
-                                  color: Colors.black,
-                                  child: const Center(
-                                    child: Text(
-                                      "Github",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                )),
-                          ),
-                        ],
-                      )
-                    ],
+            Container(
+              alignment: Alignment.centerLeft,
+              child: RichText(
+                text: TextSpan(
+                  text: DateTime.now().day.toString(),
+                  style: TextStyle(
+                    color: primary,
+                    fontSize: screenWidth / 20,
                   ),
+                  children: [
+                    TextSpan(
+                      text: DateFormat('/MM/yyyy').format(DateTime.now()),
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: screenWidth / 20,
+                      ),
+                    ),
+                  ],
                 ),
               ),
+            ),
+            StreamBuilder(
+                stream: Stream.periodic(const Duration(seconds: 1)),
+                builder: (context, snapshot) {
+                  return Container(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      DateFormat('hh:mm:ss a').format(DateTime.now()),
+                      style: TextStyle(
+                        fontSize: screenWidth / 20,
+                        color: Colors.black54,
+                      ),
+                    ),
+                  );
+                }),
+            checkOut == '--/--'
+                ? Container(
+                    margin: const EdgeInsets.only(top: 36, bottom: 12),
+                    child: Builder(
+                      builder: (context) {
+                        final GlobalKey<SlideActionState> key = GlobalKey();
+                        return SlideAction(
+                          text: checkIn == '--/--'
+                              ? 'Deslize para CheckIn'
+                              : 'Deslize para CheckOut',
+                          textStyle: TextStyle(
+                            color: Colors.black54,
+                            fontSize: screenWidth / 22,
+                          ),
+                          outerColor: Colors.white,
+                          innerColor: primary,
+                          key: key,
+                          onSubmit: () async {
+                            Timer(const Duration(seconds: 1), () {});
+                            /*CollectionReference horario =
+                                firestore.collection('Usuarios');
+                            horario.add({
+                              'checkIn': checkIn,
+                              'checkOut': checkOut,
+                            });*/
+                            QuerySnapshot snap = await FirebaseFirestore
+                                .instance
+                                .collection('Usuario')
+                                .where('id', isEqualTo: Users.username)
+                                .get();
+
+                            DocumentSnapshot snapdoc = await FirebaseFirestore
+                                .instance
+                                .collection("Usuario")
+                                .doc('Check')
+                                .collection("Gravar")
+                                .doc(DateFormat('dd/MM/yyyy')
+                                    .format(DateTime.now()))
+                                .get();
+
+                            try {
+                              String checkIn = snapdoc['checkIn'];
+                              setState(() {
+                                checkOut =
+                                    DateFormat('hh:mm').format(DateTime.now())
+                                        as TextEditingController;
+                              });
+                              await FirebaseFirestore.instance
+                                  .collection("Usuarios")
+                                  .doc()
+                                  .collection("Gravar")
+                                  .doc(DateFormat('dd/MM/yyyy')
+                                      .format(DateTime.now()))
+                                  .update({
+                                'checkIn': checkIn,
+                                'checkOut':
+                                    DateFormat('hh:mm').format(DateTime.now()),
+                              });
+                            } catch (e) {
+                              setState(() {
+                                checkIn =
+                                    DateFormat('hh:mm').format(DateTime.now())
+                                        as TextEditingController;
+                              });
+                              await FirebaseFirestore.instance
+                                  .collection("Usuarios")
+                                  .doc(snap.docs[0].id)
+                                  .collection("Gravar")
+                                  .doc(DateFormat('dd/MM/yyyy')
+                                      .format(DateTime.now()))
+                                  .set({
+                                'checkIn':
+                                    DateFormat('hh:mm').format(DateTime.now()),
+                                'checkOut': "--/--",
+                              });
+                            }
+                            key.currentState!.reset();
+                          },
+                        );
+                      },
+                    ),
+                  )
+                : Container(
+                    margin: const EdgeInsets.only(top: 32, bottom: 32),
+                    child: Text(
+                      "Já fez seu checkout hoje!!",
+                      style: TextStyle(
+                        fontSize: screenWidth / 20,
+                        color: Colors.black54,
+                      ),
+                    ),
+                  ),
+            Container(
+              child: ElevatedButton(
+                  onPressed: logout, child: const Text("LogOut")),
             )
           ],
         ),
       ),
-    );*/
-
-
-  /*bool isLogin = true;
-  late String titulo;
-  late String subTitulo;
-  late String actionButton;
-  late String toggleButton;
-  bool loading = false;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    setFormAction(true);
+    );
   }
-
-  setFormAction(bool acao) {
-    setState(() {
-      isLogin = acao;
-      if (isLogin) {
-        titulo = 'Login';
-        subTitulo = 'Bem Vindo!!';
-        actionButton = 'Login';
-        toggleButton = 'Ainda não tem conta? Cadastre-se agora';
-      } else {
-        titulo = 'Registre-se';
-        subTitulo = 'Crie sua conta';
-        actionButton = 'Registrar';
-        toggleButton = 'Já tem uma conta? Acesse aqui';
-      }
-    });
-  }
-
-  login() async {
-    setState(() => loading = true);
-    try {
-      await context
-          .read<AuthService>()
-          .login(emailController.text, passwordController.text);
-    } on AuthException catch (e) {
-      setState(() => loading = false);
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.message)));
-    }
-  }
-
-  registrar() async {
-    setState(() => loading = true);
-    try {
-      await context
-          .read<AuthService>()
-          .registrar(emailController.text, passwordController.text);
-    } on AuthException catch (e) {
-      setState(() => loading = false);
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.message)));
-    }
-  }*/
+}
+*/

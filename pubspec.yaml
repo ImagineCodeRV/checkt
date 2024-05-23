@@ -24,6 +24,7 @@ dependencies:
   location: ^6.0.2
   path_provider: ^2.0.2
   provider: ^6.1.2
+  firebase_database: ^10.5.6
 
 dev_dependencies:
   flutter_test:

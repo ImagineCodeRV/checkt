@@ -226,7 +226,12 @@ class _LoginPageState extends State<LoginPage> {
                             child: FadeInUp(
                                 duration: const Duration(milliseconds: 1900),
                                 child: MaterialButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => HomePage()));
+                                  },
                                   height: 50,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(50),
