@@ -1,5 +1,9 @@
+import 'package:checkt/model/check.dart';
 import 'package:checkt/model/user.dart';
+import 'package:checkt/pages/loginpage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
 class DBFirestore {
   DBFirestore._();
@@ -10,15 +14,40 @@ class DBFirestore {
     return DBFirestore._instance._firestore;
   }
 
-  Future<void> saveUser(Users usuario) async {
+  void _registerUser(BuildContext context) async {
+    final emailController = TextEditingController();
+    final passwordController = TextEditingController();
+    final usernameController = TextEditingController();
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
-    CollectionReference usuarios = firestore.collection('User');
+    CollectionReference usuarios = firestore.collection('Usuarios');
+    try {
+      UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: emailController.text,
+        password: passwordController.text,
+      );
+      usuarios.add({
+        'nome': usernameController.text,
+        'email': emailController.text,
+      });
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => LoginPage()));
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
 
-    Map<String, dynamic> userData = {
-      'nome': Users.username,
-      'email': Users.email,
-    };
-
-    await usuarios.add(userData);
+  void registerCheck(BuildContext context) async {
+    final List<Horarios> _lista = [];
+    final checkinController = TextEditingController();
+    final checkoutController = TextEditingController();
+    final FirebaseFirestore firestore = FirebaseFirestore.instance;
+    CollectionReference horarios = firestore.collection('Usuarios');
+    horarios.add([
+      {
+        'checkIn': checkoutController.text,
+        'checkOut': checkoutController.text,
+      }
+    ]);
   }
 }

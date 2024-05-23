@@ -1,7 +1,5 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:checkt/pages/loginpage.dart';
-import 'package:checkt/database/database_firestore.dart';
-import 'package:checkt/model/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -11,31 +9,27 @@ class RegisterPage extends StatelessWidget {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final usernameController = TextEditingController();
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
-  
+
   BuildContext get context => this.context;
 
   void _registerUser(BuildContext context) async {
+    final FirebaseFirestore firestore = FirebaseFirestore.instance;
+    CollectionReference usuarios = firestore.collection('Usuarios');
     try {
       UserCredential userCredential =
           await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: emailController.text,
         password: passwordController.text,
       );
+      usuarios.add({
+        'nome': usernameController.text,
+        'email': emailController.text,
+      });
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => LoginPage()));
     } catch (e) {
       print('Error: $e');
     }
-  }
-
-  void saveUser() async {
-    final FirebaseFirestore firestore = FirebaseFirestore.instance;
-    CollectionReference usuarios = firestore.collection('Usuarios');
-    usuarios.add({
-      'nome': usernameController.text,
-      'email': emailController.text,
-    });
-    Navigator.push(
-      context, MaterialPageRoute(builder: (context) => LoginPage()));
   }
 
   @override
@@ -167,6 +161,7 @@ class RegisterPage extends StatelessWidget {
                           duration: const Duration(milliseconds: 1600),
                           child: MaterialButton(
                             onPressed: () => _registerUser(context),
+
                             height: 50,
                             // margin: EdgeInsets.symmetric(horizontal: 50),
                             color: Colors.orange[900],
@@ -190,9 +185,7 @@ class RegisterPage extends StatelessWidget {
                       FadeInUp(
                           duration: const Duration(milliseconds: 1700),
                           child: TextButton(
-                            onPressed: () {
-                              saveUser;
-                            },
+                            onPressed: () {},
                             child: const Text(
                               "Já tem uma conta? Acesse aqui",
                               style: TextStyle(color: Colors.grey),

@@ -213,7 +213,7 @@ class _LoginPageState extends State<LoginPage> {
                                   ),
                                   child: const Center(
                                     child: Text(
-                                      "Facebook",
+                                      "Google",
                                       style: TextStyle(
                                           color: Colors.white,
                                           fontWeight: FontWeight.bold),
