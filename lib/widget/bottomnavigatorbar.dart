@@ -29,14 +29,14 @@ class _BottomNavigatorBarWidgetState extends State<BottomNavigatorBarWidget> {
       const ProfilePage(),
     ];
 
-    Color bgColor = Colors.yellow;
+    Color bgColor = Colors.black54;
     return Scaffold(
       body: pages[_indiceAtual],
       bottomNavigationBar: CurvedNavigationBar(
         items: navigationItems,
         height: 75,
         index: _indiceAtual,
-        buttonBackgroundColor: Colors.white,
+        buttonBackgroundColor: Colors.yellow[700],
         backgroundColor: bgColor,
         animationDuration: const Duration(milliseconds: 300),
         onTap: (index) {

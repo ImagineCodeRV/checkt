@@ -25,7 +25,8 @@ class _CalendarPageState extends State<CalendarPage> {
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-        body: SingleChildScrollView(
+      backgroundColor: Colors.white,
+      body: SingleChildScrollView(
       padding: EdgeInsets.all(20),
       child: Column(
         children: [

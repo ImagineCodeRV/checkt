@@ -20,10 +20,8 @@ class RegisterPage extends StatelessWidget {
 
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
     CollectionReference usuarios = firestore.collection('Usuarios');
-    final DatabaseReference ref = FirebaseDatabase.instance
-        .ref()
-        .child('Usuarios')
-        .child(usuario);
+    final DatabaseReference ref =
+        FirebaseDatabase.instance.ref().child('Usuarios').child(usuario);
     try {
       UserCredential userCredential =
           await FirebaseAuth.instance.createUserWithEmailAndPassword(
@@ -53,9 +51,9 @@ class RegisterPage extends StatelessWidget {
         width: double.infinity,
         decoration: BoxDecoration(
             gradient: LinearGradient(begin: Alignment.topCenter, colors: [
-          Colors.orange.shade900,
-          Colors.orange.shade800,
-          Colors.orange.shade400
+          Colors.black,
+          Colors.yellow.shade800,
+          Colors.yellow.shade400
         ])),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -177,7 +175,7 @@ class RegisterPage extends StatelessWidget {
 
                             height: 50,
                             // margin: EdgeInsets.symmetric(horizontal: 50),
-                            color: Colors.orange[900],
+                            color: Colors.yellow[700],
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(50),
                             ),
