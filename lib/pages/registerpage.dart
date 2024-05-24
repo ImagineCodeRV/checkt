@@ -1,4 +1,5 @@
 import 'package:animate_do/animate_do.dart';
+import 'package:checkt/database/realtime_firebase.dart';
 import 'package:checkt/model/user.dart';
 import 'package:checkt/pages/loginpage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -20,8 +21,7 @@ class RegisterPage extends StatelessWidget {
 
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
     CollectionReference usuarios = firestore.collection('Usuarios');
-    final DatabaseReference ref =
-        FirebaseDatabase.instance.ref().child('Usuarios').child(usuario);
+    final DatabaseReference ref = DataBase().reference;
     try {
       UserCredential userCredential =
           await FirebaseAuth.instance.createUserWithEmailAndPassword(

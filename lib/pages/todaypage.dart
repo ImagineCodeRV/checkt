@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'dart:core';
+import 'package:checkt/database/realtime_firebase.dart';
 import 'package:checkt/model/user.dart';
 import 'package:checkt/pages/loginpage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -18,24 +20,31 @@ class TodayPage extends StatefulWidget {
 }
 
 class _TodayPageState extends State<TodayPage> {
-  User? isLogged = FirebaseAuth.instance.currentUser;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  final DatabaseReference ref = FirebaseDatabase.instance.ref(Users.id).child('Check');
   Color bgColor = Colors.white;
   Color primary = Color.fromARGB(252, 167, 165, 17);
   double screenHeight = 0;
   double screenWidth = 0;
 
-  TextEditingController checkIn = TextEditingController();
-  TextEditingController checkOut = TextEditingController();
+  var checkIn = TextEditingController();
+  var checkOut = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _getGravar();
   }
 
   void _getGravar() async {
+    //checkIn = Timestamp.now().toDate() as TextEditingController;
+    //checkOut = Timestamp.now().toDate() as TextEditingController;
+    await ref.set({
+      'checkIn': 'checkIn',
+      'checkOut': 'checkOut',
+    });
+  }
+
+  /*void _getGravar() async {
     try {
       QuerySnapshot snap = await FirebaseFirestore.instance
           .collection('Usuario')
@@ -62,7 +71,7 @@ class _TodayPageState extends State<TodayPage> {
 
     print(checkIn);
     print(checkOut);
-  }
+  }*/
 
   logout() async {
     await _auth.signOut();
@@ -144,7 +153,7 @@ class _TodayPageState extends State<TodayPage> {
                           ),
                         ),
                         Text(
-                          checkIn.value.text,
+                          checkIn.text,
                           style: TextStyle(
                             fontSize: screenWidth / 18,
                             color: Colors.black54,
@@ -166,7 +175,7 @@ class _TodayPageState extends State<TodayPage> {
                           ),
                         ),
                         Text(
-                          checkOut.value.text,
+                          checkOut.text,
                           style: TextStyle(
                             fontSize: screenWidth / 20,
                             color: Colors.black54,
@@ -213,32 +222,25 @@ class _TodayPageState extends State<TodayPage> {
                     ),
                   );
                 }),
-            checkOut == '--/--'
-                ? Container(
-                    margin: const EdgeInsets.only(top: 36, bottom: 12),
-                    child: Builder(
-                      builder: (context) {
-                        final GlobalKey<SlideActionState> key = GlobalKey();
-                        return SlideAction(
-                          text: checkIn == '--/--'
-                              ? 'Deslize para CheckIn'
-                              : 'Deslize para CheckOut',
-                          textStyle: TextStyle(
-                            color: Colors.black54,
-                            fontSize: screenWidth / 22,
-                          ),
-                          outerColor: Colors.white,
-                          innerColor: primary,
-                          key: key,
-                          onSubmit: () async {
-                            Timer(const Duration(seconds: 1), () {});
-                            /*CollectionReference horario =
-                                firestore.collection('Usuarios');
-                            horario.add({
-                              'checkIn': checkIn,
-                              'checkOut': checkOut,
-                            });*/
-                            QuerySnapshot snap = await FirebaseFirestore
+            Container(
+              margin: const EdgeInsets.only(top: 36, bottom: 12),
+              child: Builder(
+                builder: (context) {
+                  final GlobalKey<SlideActionState> key = GlobalKey();
+                  return SlideAction(
+                    text: 'Deslize para CheckIn',
+                    textStyle: TextStyle(
+                      color: Colors.black54,
+                      fontSize: screenWidth / 22,
+                    ),
+                    outerColor: bgColor,
+                    innerColor: primary,
+                    key: key,
+                    onSubmit: () async {
+                      key.currentState!.reset();
+                      Timer(const Duration(seconds: 1), () {});
+                      _getGravar();
+                      /*QuerySnapshot snap = await FirebaseFirestore
                                 .instance
                                 .collection('Usuario')
                                 .where('email', isEqualTo: Users.email)
@@ -289,22 +291,22 @@ class _TodayPageState extends State<TodayPage> {
                                 'checkOut': "--/--",
                               });
                             }
-                            key.currentState!.reset();
-                          },
-                        );
-                      },
-                    ),
-                  )
-                : Container(
-                    margin: const EdgeInsets.only(top: 32, bottom: 32),
-                    child: Text(
-                      "Já fez seu checkout hoje!!",
-                      style: TextStyle(
-                        fontSize: screenWidth / 20,
-                        color: Colors.black54,
-                      ),
-                    ),
-                  ),
+                            key.currentState!.reset();*/
+                    },
+                  );
+                },
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.only(top: 32, bottom: 32),
+              child: Text(
+                "Já fez seu checkout hoje!!",
+                style: TextStyle(
+                  fontSize: screenWidth / 20,
+                  color: Colors.black54,
+                ),
+              ),
+            ),
             Container(
               child: ElevatedButton(
                   onPressed: logout, child: const Text("LogOut")),
