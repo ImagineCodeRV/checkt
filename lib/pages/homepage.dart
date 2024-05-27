@@ -39,13 +39,14 @@ class _HomePageState extends State<HomePage> {
   void getId() async {
     QuerySnapshot snap = await FirebaseFirestore.instance
         .collection("Usuarios")
-        .where("id", isEqualTo: Users.username)
+        .where("nome", isEqualTo: Users.username)
         .get();
 
     setState(() {
       Users.username = snap.docs[0].id;
     });
   }
+  
 
   @override
   Widget build(BuildContext context) {

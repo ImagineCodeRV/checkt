@@ -3,6 +3,7 @@ import 'dart:core';
 import 'package:checkt/database/realtime_firebase.dart';
 import 'package:checkt/model/user.dart';
 import 'package:checkt/pages/loginpage.dart';
+import 'package:checkt/services/auth_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -21,38 +22,43 @@ class TodayPage extends StatefulWidget {
 
 class _TodayPageState extends State<TodayPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final DatabaseReference ref = FirebaseDatabase.instance.ref(Users.id).child('Check');
   Color bgColor = Colors.white;
   Color primary = Color.fromARGB(252, 167, 165, 17);
   double screenHeight = 0;
   double screenWidth = 0;
 
-  var checkIn = TextEditingController();
-  var checkOut = TextEditingController();
+  var checkIn = '--/--';
+  var checkOut = '--/--';
 
   @override
   void initState() {
     super.initState();
-  }
-
-  void _getGravar() async {
-    //checkIn = Timestamp.now().toDate() as TextEditingController;
-    //checkOut = Timestamp.now().toDate() as TextEditingController;
-    await ref.set({
-      'checkIn': 'checkIn',
-      'checkOut': 'checkOut',
-    });
+    _getGravar();
   }
 
   /*void _getGravar() async {
+    final DatabaseReference ref = DataBase()
+        .reference
+        .child(Users.username)
+        .child(DateTime.now().microsecond.toString());
+    //checkIn = Timestamp.now().toDate() as TextEditingController;
+    //checkOut = Timestamp.now().toDate() as TextEditingController;
+    await ref.set({
+      'nome': Users.username,
+      'checkIn': 'checkIn',
+      'checkOut': 'checkOut',
+    });
+  }*/
+
+  void _getGravar() async {
     try {
       QuerySnapshot snap = await FirebaseFirestore.instance
-          .collection('Usuario')
-          .where('email', isEqualTo: Users.email)
+          .collection('Usuarios')
+          .where('name', isEqualTo: Users.username)
           .get();
 
       DocumentSnapshot snapdoc = await FirebaseFirestore.instance
-          .collection("Usuario")
+          .collection("Usuarios")
           .doc(snap.docs[0].id)
           .collection("Record")
           .doc(DateFormat('dd/MM/yyyy').format(DateTime.now()))
@@ -64,14 +70,14 @@ class _TodayPageState extends State<TodayPage> {
       });
     } catch (e) {
       setState(() {
-        checkIn = TextEditingController();
-        checkOut = TextEditingController();
+        checkIn = '--/--';
+        checkOut = '--/--';
       });
     }
 
     print(checkIn);
     print(checkOut);
-  }*/
+  }
 
   logout() async {
     await _auth.signOut();
@@ -153,7 +159,7 @@ class _TodayPageState extends State<TodayPage> {
                           ),
                         ),
                         Text(
-                          checkIn.text,
+                          checkIn,
                           style: TextStyle(
                             fontSize: screenWidth / 18,
                             color: Colors.black54,
@@ -175,7 +181,7 @@ class _TodayPageState extends State<TodayPage> {
                           ),
                         ),
                         Text(
-                          checkOut.text,
+                          checkOut,
                           style: TextStyle(
                             fontSize: screenWidth / 20,
                             color: Colors.black54,
@@ -237,61 +243,52 @@ class _TodayPageState extends State<TodayPage> {
                     innerColor: primary,
                     key: key,
                     onSubmit: () async {
-                      key.currentState!.reset();
                       Timer(const Duration(seconds: 1), () {});
-                      _getGravar();
-                      /*QuerySnapshot snap = await FirebaseFirestore
-                                .instance
-                                .collection('Usuario')
-                                .where('email', isEqualTo: Users.email)
-                                .get();
+                      QuerySnapshot snap = await FirebaseFirestore.instance
+                          .collection('Usuario')
+                          .where('nome', isEqualTo: Users.username)
+                          .get();
 
-                            DocumentSnapshot snapdoc = await FirebaseFirestore
-                                .instance
-                                .collection("Usuario")
-                                .doc('Check')
-                                .collection("Gravar")
-                                .doc(DateFormat('dd/MM/yyyy')
-                                    .format(DateTime.now()))
-                                .get();
+                      DocumentSnapshot snapdoc = await FirebaseFirestore
+                          .instance
+                          .collection("Usuario")
+                          .doc('Check')
+                          .collection("Record")
+                          .doc(DateFormat('dd/MM/yyyy').format(DateTime.now()))
+                          .get();
 
-                            try {
-                              String checkIn = snapdoc['checkIn'];
-                              setState(() {
-                                checkOut =
-                                    DateFormat('hh:mm').format(DateTime.now())
-                                        as TextEditingController;
-                              });
-                              await FirebaseFirestore.instance
-                                  .collection("Usuarios")
-                                  .doc()
-                                  .collection("Gravar")
-                                  .doc(DateFormat('dd/MM/yyyy')
-                                      .format(DateTime.now()))
-                                  .update({
-                                'checkIn': checkIn,
-                                'checkOut':
-                                    DateFormat('hh:mm').format(DateTime.now()),
-                              });
-                            } catch (e) {
-                              setState(() {
-                                checkIn =
-                                    DateFormat('hh:mm').format(DateTime.now())
-                                        as TextEditingController;
-                              });
-                              await FirebaseFirestore.instance
-                                  .collection("Usuarios")
-                                  .doc(snap.docs[0].id)
-                                  .collection("Gravar")
-                                  .doc(DateFormat('dd/MM/yyyy')
-                                      .format(DateTime.now()))
-                                  .set({
-                                'checkIn':
-                                    DateFormat('hh:mm').format(DateTime.now()),
-                                'checkOut': "--/--",
-                              });
-                            }
-                            key.currentState!.reset();*/
+                      try {
+                        String checkIn = snapdoc['checkIn'];
+                        setState(() {
+                          checkOut = DateFormat('hh:mm').format(DateTime.now());
+                        });
+                        await FirebaseFirestore.instance
+                            .collection("Usuarios")
+                            .doc()
+                            .collection("Record")
+                            .doc(
+                                DateFormat('dd/MM/yyyy').format(DateTime.now()))
+                            .update({
+                          'checkIn': checkIn,
+                          'checkOut':
+                              DateFormat('hh:mm').format(DateTime.now()),
+                        });
+                      } catch (e) {
+                        setState(() {
+                          checkIn = DateFormat('hh:mm').format(DateTime.now());
+                        });
+                        await FirebaseFirestore.instance
+                            .collection("Usuarios")
+                            .doc(snap.docs[0].id)
+                            .collection("Gravar")
+                            .doc(
+                                DateFormat('dd/MM/yyyy').format(DateTime.now()))
+                            .set({
+                          'checkIn': DateFormat('hh:mm').format(DateTime.now()),
+                          'checkOut': "--/--",
+                        });
+                      }
+                      key.currentState!.reset();
                     },
                   );
                 },

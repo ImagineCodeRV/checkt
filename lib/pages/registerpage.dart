@@ -4,8 +4,9 @@ import 'package:checkt/model/user.dart';
 import 'package:checkt/pages/loginpage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
+//import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl_default.dart';
 
 class RegisterPage extends StatelessWidget {
   RegisterPage({super.key});
@@ -20,22 +21,27 @@ class RegisterPage extends StatelessWidget {
     Users.username = usuario;
 
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
+    final DocumentReference<Map<String, dynamic>> db =
+        firestore.collection("Usuarios").doc(Users.username);
     CollectionReference usuarios = firestore.collection('Usuarios');
-    final DatabaseReference ref = DataBase().reference;
+  //  String userId = FirebaseDatabase.instance.ref().child('Usuarios').key!;
+  //  final DatabaseReference ref =
+  //      DataBase().reference.child(userId).child(Users.username);
+
     try {
       UserCredential userCredential =
           await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: emailController.text,
         password: passwordController.text,
       );
-      usuarios.add({
+      db.set({
         'nome': usernameController.text,
         'email': emailController.text,
       });
-      await ref.set({
+      /*await ref.set({
         'nome': usernameController.text,
         'email': emailController.text,
-      });
+      });*/
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => LoginPage()));
     } catch (e) {
