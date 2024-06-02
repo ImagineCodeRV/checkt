@@ -4,6 +4,7 @@ import 'package:checkt/database/realtime_firebase.dart';
 import 'package:checkt/model/user.dart';
 import 'package:checkt/pages/loginpage.dart';
 import 'package:checkt/services/auth_service.dart';
+import 'package:checkt/widget/appbar_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -23,7 +24,7 @@ class TodayPage extends StatefulWidget {
 class _TodayPageState extends State<TodayPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   Color bgColor = Colors.white;
-  Color primary = Color.fromARGB(252, 167, 165, 17);
+  Color primary = const Color.fromARGB(252, 167, 165, 17);
   double screenHeight = 0;
   double screenWidth = 0;
 
@@ -82,7 +83,7 @@ class _TodayPageState extends State<TodayPage> {
   logout() async {
     await _auth.signOut();
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => LoginPage()));
+        context, MaterialPageRoute(builder: (context) => const LoginPage()));
   }
 
   @override
@@ -110,7 +111,7 @@ class _TodayPageState extends State<TodayPage> {
               alignment: Alignment.centerLeft,
               margin: const EdgeInsets.only(top: 32),
               child: Text(
-                Users.username,
+                Users.id,
                 style: TextStyle(
                   fontSize: screenWidth / 18,
                   color: Colors.black,

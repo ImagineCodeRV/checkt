@@ -1,12 +1,9 @@
 import 'package:animate_do/animate_do.dart';
-import 'package:checkt/database/realtime_firebase.dart';
 import 'package:checkt/model/user.dart';
 import 'package:checkt/pages/loginpage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-//import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl_default.dart';
 
 class RegisterPage extends StatelessWidget {
   RegisterPage({super.key});
@@ -23,10 +20,6 @@ class RegisterPage extends StatelessWidget {
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
     final DocumentReference<Map<String, dynamic>> db =
         firestore.collection("Usuarios").doc(Users.username);
-    CollectionReference usuarios = firestore.collection('Usuarios');
-  //  String userId = FirebaseDatabase.instance.ref().child('Usuarios').key!;
-  //  final DatabaseReference ref =
-  //      DataBase().reference.child(userId).child(Users.username);
 
     try {
       UserCredential userCredential =
@@ -38,10 +31,6 @@ class RegisterPage extends StatelessWidget {
         'nome': usernameController.text,
         'email': emailController.text,
       });
-      /*await ref.set({
-        'nome': usernameController.text,
-        'email': emailController.text,
-      });*/
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => LoginPage()));
     } catch (e) {
@@ -119,21 +108,6 @@ class RegisterPage extends StatelessWidget {
                                 ]),
                             child: Column(
                               children: <Widget>[
-                                Container(
-                                  padding: const EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                      border: Border(
-                                          bottom: BorderSide(
-                                              color: Colors.grey.shade200))),
-                                  child: TextField(
-                                    controller: usernameController,
-                                    decoration: const InputDecoration(
-                                        hintText: "Nome do Usuário",
-                                        hintStyle:
-                                            TextStyle(color: Colors.grey),
-                                        border: InputBorder.none),
-                                  ),
-                                ),
                                 Container(
                                   padding: const EdgeInsets.all(10),
                                   decoration: BoxDecoration(

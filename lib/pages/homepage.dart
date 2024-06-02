@@ -43,10 +43,9 @@ class _HomePageState extends State<HomePage> {
         .get();
 
     setState(() {
-      Users.username = snap.docs[0].id;
+      Users.id = snap.docs[0].id;
     });
   }
-  
 
   @override
   Widget build(BuildContext context) {

@@ -1,4 +1,5 @@
 import 'package:checkt/pages/calendarpage.dart';
+import 'package:checkt/pages/chat.dart';
 import 'package:checkt/pages/profilepage.dart';
 import 'package:checkt/pages/todaypage.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
@@ -21,12 +22,14 @@ class _BottomNavigatorBarWidgetState extends State<BottomNavigatorBarWidget> {
       const Icon(Icons.calendar_today),
       const Icon(Icons.check),
       const Icon(Icons.person),
+      const Icon(Icons.chat),
     ];
 
     List<Widget> pages = [
       const CalendarPage(),
       const TodayPage(),
       const ProfilePage(),
+      const ChatPage(),
     ];
 
     Color bgColor = Colors.black54;

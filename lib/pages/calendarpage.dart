@@ -1,8 +1,6 @@
-import 'package:checkt/model/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../database/database_firestore.dart';
 
 class CalendarPage extends StatefulWidget {
   const CalendarPage({super.key});
