@@ -1,7 +1,6 @@
-class Users {
-  static String id = ' ';
-  static String username = ' ';
-  static String email = ' ';
+class User {
+  static String id = " ";
+  static String employeeId = " ";
   static String firstName = " ";
   static String lastName = " ";
   static String birthDate = " ";
